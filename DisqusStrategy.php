@@ -33,7 +33,7 @@ class DisqusStrategy extends OpauthStrategy {
      */
     public $defaults = array(
         'redirect_uri' => '{complete_url_to_strategy}oauth2callback',
-        'scope' => 'read',
+        #'scope' => 'read', # read,write is the default, so let's keep it that way
     );
     
     /**
@@ -80,11 +80,12 @@ class DisqusStrategy extends OpauthStrategy {
                         'nickname' => $results['username'],
                     ),
                     'credentials' => array(
-                        'token' => $results['access_token']
+                        'token' => $results['access_token'],
+                        'expires' => date('c', time() + $results['expires_in']),
                     ),
                     'raw' => $results
                 );
-                #$this->mapProfile($results, 'name', 'username'); # doesn't work?
+                #$this->mapProfile($results, 'nickname', 'username'); # doesn't work?
                 $this->callback();
             }
             else {
@@ -93,7 +94,7 @@ class DisqusStrategy extends OpauthStrategy {
                     'message' => 'Failed when attempting to obtain access token',
                     'raw' => array(
                         'response' => $response,
-                        'headers' => $headers
+                        'headers' => $headers,
                     )
                 );
 
@@ -103,7 +104,7 @@ class DisqusStrategy extends OpauthStrategy {
         else {
             $error = array(
                 'code' => 'oauth2callback_error',
-                'raw' => $_GET
+                'raw' => $_GET,
             );
             
             $this->errorCallback($error);

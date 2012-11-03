@@ -18,7 +18,7 @@ Getting started
 
 2. Register a Disqus application at http://disqus.com/api/applications/
    - Enter URL as your application URL (this can be outside of Opauth)
-   - Callback URL: enter `http://path_to_opauth/Disqus/oauth2callback`
+   - Callback URL: enter `http://path_to_opauth/disqus/oauth2callback`
 
 3. Under the settings tab, enter the Domains, without the scheme:
    example.com, not http://example.com
