@@ -74,18 +74,29 @@ class DisqusStrategy extends OpauthStrategy {
             $results = json_decode($response, true);
            
             if (!empty($results) && !empty($results['access_token'])) {
+                $user = $this->user($results['access_token']);
+                $response = $user['response'];
                 $this->auth = array(
                     'uid' => $results['user_id'],
                     'info' => array(
-                        'nickname' => $results['username'],
                     ),
                     'credentials' => array(
                         'token' => $results['access_token'],
                         'expires' => date('c', time() + $results['expires_in']),
                     ),
-                    'raw' => $results
+                    'raw' => array('results' => $results, 'user' => $user),
                 );
-                #$this->mapProfile($results, 'nickname', 'username'); # doesn't work?
+
+                $this->mapProfile($response, 'name', 'info.name');
+                #$this->mapProfile($response, 'blog', 'info.urls.blog');
+                $this->mapProfile($response, 'avatar.permalink', 'info.image');
+                $this->mapProfile($response, 'about', 'info.description');
+                $this->mapProfile($results, 'username', 'info.username');
+                $this->mapProfile($response, 'url', 'info.urls.url');
+                #$this->mapProfile($response, 'email', 'info.email');
+                $this->mapProfile($response, 'location', 'info.location');
+                $this->mapProfile($response, 'profileUrl', 'info.urls.profile');
+
                 $this->callback();
             }
             else {
@@ -107,6 +118,38 @@ class DisqusStrategy extends OpauthStrategy {
                 'raw' => $_GET,
             );
             
+            $this->errorCallback($error);
+        }
+    }
+
+    /**
+     * Queries Disqus v3 API for user info
+     *
+     * @param string $access_token 
+     * @return array Parsed JSON results
+     */
+    private function user($access_token) {
+        $params = array(
+            'access_token' => $access_token,
+            'api_key' => $this->strategy['api_key'],
+            #'api_secret' => $this->strategy['api_secret'], # not required
+        );
+       
+        $user = $this->serverGet('https://disqus.com/api/3.0/users/details.json', $params, null, $headers);
+
+        if (!empty($user)) {
+            return $this->recursiveGetObjectVars(json_decode($user));
+        }
+        else {
+            $error = array(
+                'code' => 'userinfo_error',
+                'message' => 'Failed when attempting to query Disqus v3 API for user information',
+                'raw' => array(
+                    'response' => $user,
+                    'headers' => $headers
+                )
+            );
+
             $this->errorCallback($error);
         }
     }
