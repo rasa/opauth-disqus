@@ -23,7 +23,7 @@ Getting started
 3. Under the settings tab, enter the Domains, without the scheme:
    example.com, not http://example.com
 
-3. Configure Opauth-Disqus strategy with `api_key` and `apikey_secret`.
+3. Configure Opauth-Disqus strategy with `api_key` and `api_secret`.
 
 4. Direct user to `http://path_to_opauth/disqus` to authenticate
 
@@ -41,7 +41,7 @@ Required parameters:
 ```
 
 Optional parameters:
-`scope`, `state`
+`scope`
 
 License
 ---------
