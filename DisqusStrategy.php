@@ -177,21 +177,18 @@ class DisqusStrategy extends OpauthStrategy {
                 $errno = 2;
                 break;
             }
-
-            if (!isset($user['code'])) {
+            $rv = $this->recursiveGetObjectVars(json_decode($user));
+            if (empty($rv)) {
+                $errno = 5;
+                break;
+            }
+            if (!isset($rv['code'])) {
                 $errno = 3;
                 break;
             }
 
-            if ($user['code'] <> 0) {
+            if ($rv['code'] <> 0) {
                 $errno = 4;
-                break;
-            }
-
-            $rv = $this->recursiveGetObjectVars(json_decode($user));
-
-            if (empty($rv)) {
-                $errno = 5;
                 break;
             }
 
@@ -199,7 +196,6 @@ class DisqusStrategy extends OpauthStrategy {
                 $errno = 6;
                 break;
             }
-
             return $rv['response'];
         }
 
