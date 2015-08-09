@@ -150,7 +150,7 @@ class DisqusStrategy extends OpauthStrategy {
         $this->mapProfile($response, 'about', 'info.description');
         $this->mapProfile($results, 'username', 'info.username');
         $this->mapProfile($response, 'url', 'info.urls.url');
-        #$this->mapProfile($response, 'email', 'info.email');
+        $this->mapProfile($response, 'email', 'info.email');
         $this->mapProfile($response, 'location', 'info.location');
         $this->mapProfile($response, 'profileUrl', 'info.urls.profile');
 
